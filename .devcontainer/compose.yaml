@@ -1,0 +1,11 @@
+name: ${REPO_NAME:?}-${PWD:?}
+
+services:
+  devcontainer:
+    image: ghcr.io/dlrobson/${REPO_NAME}-ci:latest
+    group_add:
+      - ${DOCKER_GID:?}
+    volumes:
+      - ..:/workspaces/${REPO_NAME:?}:cached
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: "bash -c 'trap exit TERM; sleep infinity & wait;'"
