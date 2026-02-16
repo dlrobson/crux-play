@@ -1,0 +1,4 @@
+generated/
+.settings
+.project
+*.xcodeproj

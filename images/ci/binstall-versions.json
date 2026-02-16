@@ -13,5 +13,10 @@
         "crate": "just",
         "repo": "casey/just",
         "version": "1.46.0"
+    },
+    {
+        "crate": "wasm-pack",
+        "repo": "rustwasm/wasm-pack",
+        "version": "0.14.0"
     }
 ]

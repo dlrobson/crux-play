@@ -1,5 +1,5 @@
 #!/usr/bin/env sh
-set -eu
+set -eux
 
 # Initialize devcontainer environment
 # This script is run before the container is built
