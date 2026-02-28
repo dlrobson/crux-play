@@ -3,7 +3,6 @@ name = "shared"
 version = "0.1.0"
 authors.workspace = true
 edition.workspace = true
-rust-version.workspace = true
 repository.workspace = true
 license.workspace = true
 keywords.workspace = true
@@ -28,9 +27,9 @@ codegen = [
 facet_typegen = ["crux_core/facet_typegen"]
 
 [dependencies]
-crux_core.workspace = true
-serde = { workspace = true, features = ["derive"] }
-facet = "=0.31"
+crux_core = { version = "0.17.0-rc2" }
+serde = { version = "1.0.228", features = ["derive"] }
+facet = "0.31"
 
 # optional dependencies
 clap = { version = "4.5.54", optional = true, features = ["derive"] }

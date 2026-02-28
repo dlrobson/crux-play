@@ -29,10 +29,11 @@ RUN echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen && locale-gen && \
 RUN rustup component add clippy rust-analyzer rustfmt && \
     rustup toolchain install nightly --profile minimal --component rustfmt,llvm-tools-preview
 
-# Install Node.js and enable pnpm via Corepack
-RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
+# Install Node.js and npm
+RUN curl -fsSL https://deb.nodesource.com/setup_24.x | bash - && \
     apt-get install -y nodejs && \
-    corepack enable && corepack prepare pnpm@latest --activate
+    npm install -g npm@latest && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
 
 USER ${USER}
 
