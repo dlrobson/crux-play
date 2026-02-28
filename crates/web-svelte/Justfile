@@ -33,4 +33,4 @@ install:
 
 # build everything and run the dev server
 dev: build
-    pnpm dev
+    pnpm dev --host
