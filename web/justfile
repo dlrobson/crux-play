@@ -1,0 +1,37 @@
+web-typegen:
+    cargo run --package shared --bin codegen --features codegen,facet_typegen -- --output-dir {{ source_directory() }}/generated/types
+
+web-wasm:
+    wasm-pack build --target web --out-dir {{ source_directory() }}/generated/pkg crates/shared --features wasm_bindgen
+
+web-install:
+    cd {{ source_directory() }} && npm install
+
+web-clean:
+    rm -rf \
+        {{ source_directory() }}/generated \
+        {{ source_directory() }}/build \
+        {{ source_directory() }}/node_modules \
+        {{ source_directory() }}/.svelte-kit \
+        {{ source_directory() }}/../.pnpm-store
+
+web-build: web-typegen web-wasm web-install
+    cd {{ source_directory() }} && npm run build
+
+web-lint: web-install
+    cd {{ source_directory() }} && npm run lint
+
+web-lint-fix: web-install
+    cd {{ source_directory() }} && npm run lint:fix
+
+web-format: web-install
+    cd {{ source_directory() }} && npm run format
+
+web-format-check: web-install
+    cd {{ source_directory() }} && npm run format:check
+
+web: web-build
+    cd {{ source_directory() }} && npm run preview -- --host
+
+web-dev: web-typegen web-wasm web-install
+    cd {{ source_directory() }} && npm run dev -- --host
