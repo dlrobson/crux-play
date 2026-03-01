@@ -3,36 +3,52 @@ coverage-threshold := "0"
 profile := "dev"
 docker-image := file_name(justfile_directory())
 docker-tag := "local"
-
+[private]
 _coverage-html-output-directory-argument := if coverage-html-directory != "" { "--output-dir=" + coverage-html-directory } else { "" }
 
-default: audit build clippy fmt test
+default: audit build lint format-check test
 
 audit:
     cargo deny --locked check
 
-build:
-    cargo build --locked --profile {{profile}}
+build: cargo-build web-build
 
-clippy *ARGS:
-    cargo clippy --locked --profile {{profile}} --workspace --all-features --all-targets {{ARGS}} -- -D warnings
+lint: cargo-lint web-lint
 
-clippy-fix *ARGS: (clippy "--fix" "--allow-dirty" ARGS)
+format: cargo-fmt web-format
 
-coverage:
-    cargo +nightly llvm-cov --all-features --workspace --locked --branch
-    cargo +nightly llvm-cov report --html {{_coverage-html-output-directory-argument}} --fail-under-lines={{coverage-threshold}}
+format-check: (cargo-fmt "--check") web-format-check
+
+test: cargo-test
 
 docker-build:
-    docker build -t {{docker-image}}:{{docker-tag}} -f images/production/Dockerfile .
+    docker build -t {{ docker-image }}:{{ docker-tag }} -f images/production/Dockerfile .
 
-doc $RUSTDOCFLAGS="-D warnings":
-    cargo doc --locked --profile {{profile}} --lib --no-deps --all-features --document-private-items
+# ── Cargo ───────────────────────────────────────────────────────────────────
 
-fmt *ARGS:
-    cargo +nightly fmt {{ARGS}}
+cargo-build:
+    cargo build --locked --profile {{ profile }}
 
-test *ARGS:
-    cargo test --locked --profile {{profile}} {{ARGS}}
+cargo-lint *ARGS:
+    cargo clippy --locked --profile {{ profile }} --workspace --all-features --all-targets {{ ARGS }} -- -D warnings
 
-unit-test: (test "--lib")
+cargo-lint-fix *ARGS: (cargo-lint "--fix" "--allow-dirty" ARGS)
+
+cargo-coverage:
+    cargo +nightly llvm-cov --all-features --workspace --locked --branch
+    cargo +nightly llvm-cov report --html {{ _coverage-html-output-directory-argument }} --fail-under-lines={{ coverage-threshold }}
+
+cargo-doc $RUSTDOCFLAGS="-D warnings":
+    cargo doc --locked --profile {{ profile }} --lib --no-deps --all-features --document-private-items
+
+cargo-fmt *ARGS:
+    cargo +nightly fmt {{ ARGS }}
+
+cargo-test *ARGS:
+    cargo test --locked --profile {{ profile }} {{ ARGS }}
+
+cargo-unit-test: (cargo-test "--lib")
+
+# ── Imports ─────────────────────────────────────────────────────────────────
+
+import 'web/justfile'

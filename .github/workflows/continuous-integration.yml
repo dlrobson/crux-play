@@ -54,7 +54,7 @@ jobs:
       options: --user 0
     steps:
       - uses: actions/checkout@v6
-      - &cache
+      - &cargo-cache
         uses: actions/cache@v5
         with:
           path: |
@@ -62,8 +62,7 @@ jobs:
           key: ${{ github.job }}-${{ hashFiles('Cargo.lock') }}
 
       - name: Run tests
-        run: just test
-
+        run: just cargo-test
 
   quality-check:
     runs-on: ubuntu-latest
@@ -71,15 +70,19 @@ jobs:
     container: *build-container
     steps:
       - uses: actions/checkout@v6
-      - *cache
+      - *cargo-cache
+      - uses: actions/cache@v5
+        with:
+          path: web/node_modules/
+          key: ${{ github.job }}-${{ hashFiles('web/package-lock.json') }}
 
-      - name: Check Rust formatting
+      - name: Check formatting
         if: ${{ !cancelled() }}
-        run: just fmt --check
+        run: just format --check
 
-      - name: Check for clippy warnings
+      - name: Check for Lint warnings
         if: ${{ !cancelled() }}
-        run: just clippy
+        run: just lint
 
   code-coverage:
     runs-on: ubuntu-latest
@@ -89,10 +92,10 @@ jobs:
       COVERAGE_HTML_DIRECTORY: /tmp/coverage
     steps:
       - uses: actions/checkout@v6
-      - *cache
+      - *cargo-cache
 
       - name: Generate code coverage
-        run: just coverage-html-directory=${{ env.COVERAGE_HTML_DIRECTORY }} coverage
+        run: just coverage-html-directory=${{ env.COVERAGE_HTML_DIRECTORY }} cargo-coverage
 
       - name: Upload coverage reports
         if: ${{ !cancelled() }}
@@ -107,11 +110,11 @@ jobs:
     container: *build-container
     steps:
       - uses: actions/checkout@v6
-      - *cache
+      - *cargo-cache
 
       - name: Generate docs
         if: ${{ !cancelled() }}
-        run: just doc
+        run: just cargo-doc
 
       - name: Upload Docs
         if: ${{ !cancelled() }}

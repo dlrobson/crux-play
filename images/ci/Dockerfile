@@ -29,10 +29,10 @@ RUN echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen && locale-gen && \
 RUN rustup component add clippy rust-analyzer rustfmt && \
     rustup toolchain install nightly --profile minimal --component rustfmt,llvm-tools-preview
 
-# Install Node.js and npm
+# Install Node.js and npm; also install pnpm (required by crux_core TypeScript codegen)
 RUN curl -fsSL https://deb.nodesource.com/setup_24.x | bash - && \
     apt-get install -y nodejs && \
-    npm install -g npm@latest && \
+    npm install -g npm@latest pnpm@latest && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
 USER ${USER}

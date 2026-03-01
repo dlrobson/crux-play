@@ -63,8 +63,9 @@ impl App for Counter {
 // ANCHOR: test
 #[cfg(test)]
 mod test {
-    use super::*;
     use crux_core::assert_effect;
+
+    use super::*;
 
     #[test]
     fn renders() {

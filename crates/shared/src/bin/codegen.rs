@@ -3,9 +3,8 @@ use std::path::PathBuf;
 use clap::Parser;
 use crux_core::type_generation::facet::{Config, TypeRegistry};
 use log::info;
-use uniffi::deps::anyhow::Result;
-
 use shared::Counter;
+use uniffi::deps::anyhow::Result;
 
 #[derive(Parser)]
 #[command(version, about, long_about = None)]
