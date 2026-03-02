@@ -78,7 +78,7 @@ jobs:
 
       - name: Check formatting
         if: ${{ !cancelled() }}
-        run: just format --check
+        run: just format-check
 
       - name: Check for Lint warnings
         if: ${{ !cancelled() }}
