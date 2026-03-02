@@ -18,7 +18,7 @@ web-clean:
 web-build: web-typegen web-wasm web-install
     cd {{ source_directory() }} && npm run build
 
-web-lint: web-install
+web-lint: web-typegen web-wasm web-install
     cd {{ source_directory() }} && npm run lint
 
 web-lint-fix: web-install
