@@ -29,7 +29,7 @@ facet_typegen = ["crux_core/facet_typegen"]
 [dependencies]
 crux_core = { version = "0.17.0-rc2" }
 serde = { version = "1.0.228", features = ["derive"] }
-facet = "0.31"
+facet = "0.44.0"
 
 # optional dependencies
 clap = { version = "4.5.54", optional = true, features = ["derive"] }
