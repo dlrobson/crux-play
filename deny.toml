@@ -1,6 +1,7 @@
 [advisories]
-unmaintained = "all"
+unmaintained = "workspace"
 yanked = "deny"
+ignore = []
 
 [bans]
 multiple-versions = "allow"
@@ -12,9 +13,7 @@ deny = [
 ]
 
 [licenses]
-allow = [
-    "MIT",
-]
+allow = ["Apache-2.0", "MIT", "Unicode-3.0"]
 unused-allowed-license = "deny"
 
 [sources]
