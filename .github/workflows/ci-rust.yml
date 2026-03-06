@@ -1,0 +1,88 @@
+name: Rust CI
+
+on:
+  workflow_call:
+    inputs:
+      image:
+        required: true
+        type: string
+
+env:
+  CARGO_TERM_COLOR: always
+  RUST_LOG: debug
+  RUST_BACKTRACE: full
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: ${{ inputs.image }}
+      options: --user 0
+    steps:
+      - uses: actions/checkout@v6
+      - &cargo-cache
+        uses: actions/cache@v5
+        with:
+          path: target/
+          key: ${{ github.job }}-${{ hashFiles('Cargo.lock') }}
+
+      - name: Run tests
+        run: just cargo-test
+
+  quality-check:
+    runs-on: ubuntu-latest
+    container:
+      image: ${{ inputs.image }}
+      options: --user 0
+    steps:
+      - uses: actions/checkout@v6
+      - *cargo-cache
+
+      - name: Check Rust formatting
+        if: ${{ !cancelled() }}
+        run: just cargo-fmt "--check"
+
+      - name: Check for Rust lint warnings
+        if: ${{ !cancelled() }}
+        run: just cargo-lint
+
+  code-coverage:
+    runs-on: ubuntu-latest
+    container:
+      image: ${{ inputs.image }}
+      options: --user 0
+    env:
+      COVERAGE_HTML_DIRECTORY: /tmp/coverage
+    steps:
+      - uses: actions/checkout@v6
+      - *cargo-cache
+
+      - name: Generate code coverage
+        run: just coverage-html-directory=${{ env.COVERAGE_HTML_DIRECTORY }} cargo-coverage
+
+      - name: Upload coverage reports
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v6
+        with:
+          name: coverage-report
+          path: ${{ env.COVERAGE_HTML_DIRECTORY }}
+
+  docs:
+    runs-on: ubuntu-latest
+    container:
+      image: ${{ inputs.image }}
+      options: --user 0
+    steps:
+      - uses: actions/checkout@v6
+      - *cargo-cache
+
+      - name: Generate docs
+        if: ${{ !cancelled() }}
+        run: just cargo-doc
+
+      - name: Upload Docs
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v6
+        with:
+          name: docs
+          path: target/doc

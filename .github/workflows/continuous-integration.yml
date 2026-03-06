@@ -46,108 +46,29 @@ jobs:
         run: |
           echo "image=${{ needs.prepare-ci-image.outputs.image }}" >> $GITHUB_OUTPUT
 
-  build:
-    runs-on: ubuntu-latest
+  rust:
     needs: workflow-initialization
-    container: &build-container
+    uses: ./.github/workflows/ci-rust.yml
+    with:
       image: ${{ needs.workflow-initialization.outputs.image }}
-      options: --user 0
-    steps:
-      - uses: actions/checkout@v6
-      - &cargo-cache
-        uses: actions/cache@v5
-        with:
-          path: |
-            target/
-          key: ${{ github.job }}-${{ hashFiles('Cargo.lock') }}
 
-      - name: Run tests
-        run: just cargo-test
-
-  quality-check:
-    runs-on: ubuntu-latest
+  web:
     needs: workflow-initialization
-    container: *build-container
-    steps:
-      - uses: actions/checkout@v6
-      - *cargo-cache
-      - uses: actions/cache@v5
-        with:
-          path: web/node_modules/
-          key: ${{ github.job }}-${{ hashFiles('web/package-lock.json') }}
+    uses: ./.github/workflows/ci-web.yml
+    with:
+      image: ${{ needs.workflow-initialization.outputs.image }}
 
-      - name: Check formatting
-        if: ${{ !cancelled() }}
-        run: just format-check
-
-      - name: Check for Lint warnings
-        if: ${{ !cancelled() }}
-        run: just lint
-
-  code-coverage:
-    runs-on: ubuntu-latest
+  docker:
     needs: workflow-initialization
-    container: *build-container
-    env:
-      COVERAGE_HTML_DIRECTORY: /tmp/coverage
-    steps:
-      - uses: actions/checkout@v6
-      - *cargo-cache
-
-      - name: Generate code coverage
-        run: just coverage-html-directory=${{ env.COVERAGE_HTML_DIRECTORY }} cargo-coverage
-
-      - name: Upload coverage reports
-        if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v6
-        with:
-          name: coverage-report
-          path: ${{ env.COVERAGE_HTML_DIRECTORY }}
-
-  docs:
-    runs-on: ubuntu-latest
-    needs: workflow-initialization
-    container: *build-container
-    steps:
-      - uses: actions/checkout@v6
-      - *cargo-cache
-
-      - name: Generate docs
-        if: ${{ !cancelled() }}
-        run: just cargo-doc
-
-      - name: Upload Docs
-        if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v6
-        with:
-          name: docs
-          path: target/doc
+    uses: ./.github/workflows/ci-docker.yml
+    with:
+      image: ${{ needs.workflow-initialization.outputs.image }}
+      image-tags: ${{ github.event.pull_request.number && format('pr-{0}', github.event.pull_request.number) || 'latest' }}
+    secrets:
+      token: ${{ secrets.GITHUB_TOKEN }}
 
   call-security-audit:
     needs: workflow-initialization
     uses: ./.github/workflows/audit.yml
     with:
       image: ${{ needs.workflow-initialization.outputs.image }}
-
-  docker-build:
-    runs-on: ubuntu-latest
-    needs: workflow-initialization
-    container: *build-container
-    steps:
-      - uses: actions/checkout@v6
-      - name: Build production Docker image
-        run: just docker-build
-
-  build-production-image:
-    needs: workflow-initialization
-    permissions:
-      packages: write
-    uses: dlrobson/toolbox/.github/workflows/build-image.yml@main
-    with:
-      registry: ghcr.io
-      image-name: ${{ github.repository }}
-      image-tags: ${{ github.event.pull_request.number && format('pr-{0}', github.event.pull_request.number) || 'latest' }}
-      dockerfile-context: .
-      dockerfile: images/production/Dockerfile
-    secrets:
-      token: ${{ secrets.GITHUB_TOKEN }}

@@ -49,6 +49,50 @@ cargo-test *ARGS:
 
 cargo-unit-test: (cargo-test "--lib")
 
-# ── Imports ─────────────────────────────────────────────────────────────────
+# ── Web ─────────────────────────────────────────────────────────────────────
 
-import 'web/justfile'
+_web := justfile_directory() / "web"
+
+# Build all Rust-generated web artifacts (typegen + wasm)
+web-artifacts:
+    cargo xtask
+
+web-install:
+    cd {{ _web }} && npm install
+
+web-clean:
+    rm -rf \
+        {{ _web }}/generated \
+        {{ _web }}/build \
+        {{ _web }}/node_modules \
+        {{ _web }}/.svelte-kit \
+        {{ justfile_directory() }}/.pnpm-store
+
+web-build: web-artifacts web-install
+    cd {{ _web }} && npm run build
+
+# Run npm build only — assumes web artifacts are already present on disk (used in CI)
+web-build-only: web-install
+    cd {{ _web }} && npm run build
+
+web-lint: web-artifacts web-install
+    cd {{ _web }} && npm run lint
+
+# Run npm lint only — assumes web artifacts are already present on disk (used in CI)
+web-lint-only: web-install
+    cd {{ _web }} && npm run lint
+
+web-lint-fix: web-install
+    cd {{ _web }} && npm run lint:fix
+
+web-format: web-install
+    cd {{ _web }} && npm run format
+
+web-format-check: web-install
+    cd {{ _web }} && npm run format:check
+
+web: web-build
+    cd {{ _web }} && npm run preview -- --host
+
+web-dev: web-artifacts web-install
+    cd {{ _web }} && npm run dev -- --host
