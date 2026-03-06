@@ -1,0 +1,39 @@
+name: Docker CI
+
+on:
+  workflow_call:
+    inputs:
+      image:
+        required: true
+        type: string
+      image-tags:
+        required: true
+        type: string
+    secrets:
+      token:
+        required: true
+
+jobs:
+  docker-build:
+    runs-on: ubuntu-latest
+    container:
+      image: ${{ inputs.image }}
+      options: --user 0
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Build production Docker image
+        run: just docker-build
+
+  build-production-image:
+    permissions:
+      packages: write
+    uses: dlrobson/toolbox/.github/workflows/build-image.yml@main
+    with:
+      registry: ghcr.io
+      image-name: ${{ github.repository }}
+      image-tags: ${{ inputs.image-tags }}
+      dockerfile-context: .
+      dockerfile: images/production/Dockerfile
+    secrets:
+      token: ${{ secrets.token }}
