@@ -1,8 +1,6 @@
-web-typegen:
-    cargo run --package shared --bin codegen --features codegen,facet_typegen -- --output-dir {{ source_directory() }}/generated/types
-
-web-wasm:
-    wasm-pack build --target web --out-dir {{ source_directory() }}/generated/pkg crates/shared --features wasm_bindgen
+# Build all Rust-generated web artifacts (typegen + wasm)
+web-artifacts:
+    cargo xtask
 
 web-install:
     cd {{ source_directory() }} && npm install
@@ -15,10 +13,10 @@ web-clean:
         {{ source_directory() }}/.svelte-kit \
         {{ source_directory() }}/../.pnpm-store
 
-web-build: web-typegen web-wasm web-install
+web-build: web-artifacts web-install
     cd {{ source_directory() }} && npm run build
 
-web-lint: web-typegen web-wasm web-install
+web-lint: web-artifacts web-install
     cd {{ source_directory() }} && npm run lint
 
 web-lint-fix: web-install
@@ -33,5 +31,5 @@ web-format-check: web-install
 web: web-build
     cd {{ source_directory() }} && npm run preview -- --host
 
-web-dev: web-typegen web-wasm web-install
+web-dev: web-artifacts web-install
     cd {{ source_directory() }} && npm run dev -- --host
