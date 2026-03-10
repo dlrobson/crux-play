@@ -2,7 +2,7 @@
 
 use std::path::{Path, PathBuf};
 
-use anyhow::{Context, Result};
+use anyhow::{Context as _, Result};
 use crux_core::type_generation::facet::{Config, TypeRegistry};
 use shared::Counter;
 use xshell::{Shell, cmd};
@@ -16,11 +16,6 @@ fn main() -> Result<()> {
 fn typegen() -> Result<()> {
     let root = project_root()?;
     let output_dir = root.join("web/generated/types");
-
-    eprintln!(
-        "→ Generating TypeScript types into {}",
-        output_dir.display()
-    );
 
     let typegen_app = TypeRegistry::new()
         .register_app::<Counter>()
@@ -45,26 +40,12 @@ fn wasm() -> Result<()> {
     let out_dir = root.join("web/generated/pkg");
     let crate_path = root.join("crates/shared");
 
-    check_wasm_pack()?;
-
-    eprintln!("→ Building WASM package into {}", out_dir.display());
-
     cmd!(
         sh,
         "wasm-pack build --target web --out-dir {out_dir} {crate_path} --features wasm_bindgen"
     )
     .run()
     .context("wasm-pack build failed")
-}
-
-/// Verify `wasm-pack` is available on PATH before attempting to use it.
-fn check_wasm_pack() -> Result<()> {
-    let sh = Shell::new()?;
-    cmd!(sh, "wasm-pack --version")
-        .quiet()
-        .run()
-        .context("`wasm-pack` not found on PATH — install it with: cargo install wasm-pack")?;
-    Ok(())
 }
 
 /// Resolve the workspace root from the xtask crate's manifest directory.

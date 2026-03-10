@@ -1,7 +1,9 @@
+//! Contains shared code for the Crux app and the FFI bindings.
+
 mod app;
 pub mod ffi;
 
-pub use app::*;
+pub use app::{Counter, Effect, EffectFfi, Event, Model, ViewModel};
 pub use crux_core::Core;
 
 #[cfg(feature = "uniffi")]
