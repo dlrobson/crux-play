@@ -1,4 +1,5 @@
-// ANCHOR: app
+//! Contains the Counter object, which implements the `App` trait and is used
+//! by the FFI bindings.
 use crux_core::{
     App, Command,
     macros::effect,
@@ -31,9 +32,10 @@ pub struct Model {
 
 #[derive(Facet, Serialize, Deserialize, Clone, Default)]
 pub struct ViewModel {
-    pub count: String,
+    count: String,
 }
 
+/// The Counter app, which implements the `App` trait from `crux_core`.
 #[derive(Default)]
 pub struct Counter;
 

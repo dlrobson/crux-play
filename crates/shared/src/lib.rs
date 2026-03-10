@@ -3,8 +3,7 @@
 mod app;
 pub mod ffi;
 
-pub use app::{Counter, Effect, EffectFfi, Event, Model, ViewModel};
-pub use crux_core::Core;
+pub use app::Counter;
 
 #[cfg(feature = "uniffi")]
 const _: () = assert!(

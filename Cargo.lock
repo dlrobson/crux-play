@@ -156,9 +156,9 @@ checksum = "d0a5c400df2834b80a4c3327b3aad3a4c4cd4de0629063962b03235697506a28"
 
 [[package]]
 name = "crux_core"
-version = "0.17.0-rc2"
+version = "0.17.0-rc3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1f7dcabcd8aad70780470a8fbc05ebe29ff3a2a836e613f050d64bb97650942c"
+checksum = "a0f8bab3a48dbc4c2ce72f87cc13efec90d59f0763d5b23d594819b52c860e85"
 dependencies = [
  "anyhow",
  "bincode",
@@ -176,9 +176,9 @@ dependencies = [
 
 [[package]]
 name = "crux_macros"
-version = "0.8.0-rc2"
+version = "0.8.0-rc3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c18ba1052a1f28c97e3595e5a64496921953b3945cf7537e0544f93b36735e74"
+checksum = "7ae641e716b11bb7980b5c123461f00077648fbacb89e622d31598aedbb55614"
 dependencies = [
  "darling 0.23.0",
  "heck",
@@ -358,9 +358,9 @@ dependencies = [
 
 [[package]]
 name = "facet_generate"
-version = "0.13.2"
+version = "0.15.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "64bf6066ad1a7c80b07db8e092e6f7b54ae757f71b28fdda8211d080c2ad2ce8"
+checksum = "365ecced7918c3debf5e1407d36e8420a04088f598380034ffcd8a506dce2fc0"
 dependencies = [
  "derive_builder",
  "facet",
