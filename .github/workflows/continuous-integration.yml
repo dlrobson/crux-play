@@ -61,6 +61,8 @@ jobs:
   docker:
     needs: workflow-initialization
     uses: ./.github/workflows/ci-docker.yml
+    permissions:
+      packages: write
     with:
       image: ${{ needs.workflow-initialization.outputs.image }}
       image-tags: ${{ github.event.pull_request.number && format('pr-{0}', github.event.pull_request.number) || 'latest' }}
