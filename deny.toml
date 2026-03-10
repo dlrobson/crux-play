@@ -13,7 +13,7 @@ deny = [
 ]
 
 [licenses]
-allow = ["Apache-2.0", "MIT", "Unicode-3.0"]
+allow = ["Apache-2.0", "MIT", "MPL-2.0", "Unicode-3.0"]
 unused-allowed-license = "deny"
 
 [sources]

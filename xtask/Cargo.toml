@@ -1,6 +1,5 @@
 [package]
 name = "xtask"
-version.workspace = true
 
 authors.workspace = true
 categories.workspace = true
