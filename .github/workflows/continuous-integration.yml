@@ -59,6 +59,7 @@ jobs:
       image: ${{ needs.workflow-initialization.outputs.image }}
 
   docker:
+    if: false # Temporarily disable Docker build until we have a production image
     needs: workflow-initialization
     uses: ./.github/workflows/ci-docker.yml
     permissions:
