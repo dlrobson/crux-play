@@ -1,8 +1,9 @@
+//! Contains shared code for the Crux app and the FFI bindings.
+
 mod app;
 pub mod ffi;
 
-pub use app::*;
-pub use crux_core::Core;
+pub use app::Counter;
 
 #[cfg(feature = "uniffi")]
 const _: () = assert!(

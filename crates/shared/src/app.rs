@@ -1,4 +1,5 @@
-// ANCHOR: app
+//! Contains the Counter object, which implements the `App` trait and is used
+//! by the FFI bindings.
 use crux_core::{
     App, Command,
     macros::effect,
@@ -10,8 +11,11 @@ use serde::{Deserialize, Serialize};
 #[derive(Facet, Serialize, Deserialize, Clone, Debug)]
 #[repr(C)]
 pub enum Event {
+    /// Increment the count by 1
     Increment,
+    /// Decrement the count by 1
     Decrement,
+    /// Reset the count to 0
     Reset,
 }
 
@@ -28,9 +32,10 @@ pub struct Model {
 
 #[derive(Facet, Serialize, Deserialize, Clone, Default)]
 pub struct ViewModel {
-    pub count: String,
+    count: String,
 }
 
+/// The Counter app, which implements the `App` trait from `crux_core`.
 #[derive(Default)]
 pub struct Counter;
 
@@ -123,8 +128,8 @@ mod test {
         let app = Counter;
         let mut model = Model::default();
 
-        let _ = app.update(Event::Increment, &mut model);
-        let _ = app.update(Event::Reset, &mut model);
+        let _event = app.update(Event::Increment, &mut model);
+        let _event = app.update(Event::Reset, &mut model);
 
         let actual_view = app.view(&model).count;
         let expected_view = "Count is: 0";
@@ -136,11 +141,11 @@ mod test {
         let app = Counter;
         let mut model = Model::default();
 
-        let _ = app.update(Event::Increment, &mut model);
-        let _ = app.update(Event::Reset, &mut model);
-        let _ = app.update(Event::Decrement, &mut model);
-        let _ = app.update(Event::Increment, &mut model);
-        let _ = app.update(Event::Increment, &mut model);
+        let _event = app.update(Event::Increment, &mut model);
+        let _event = app.update(Event::Reset, &mut model);
+        let _event = app.update(Event::Decrement, &mut model);
+        let _event = app.update(Event::Increment, &mut model);
+        let _event = app.update(Event::Increment, &mut model);
 
         let actual_view = app.view(&model).count;
         let expected_view = "Count is: 1";
